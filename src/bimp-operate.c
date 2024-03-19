@@ -41,6 +41,7 @@ static gboolean image_save_tiff(image_output, int);
 static gboolean image_save_webp(image_output, int, gboolean, float, float, gboolean, gboolean, gboolean, int, gboolean, gboolean, gboolean, int, int);
 static gboolean image_save_avif(image_output, gboolean, int);
 static gboolean image_save_exr(image_output);
+static gboolean image_save_eps(image_output);
 
 static int overwrite_result(char*, GtkWidget*);
 
@@ -1105,6 +1106,9 @@ static gboolean image_save(format_type type, image_output imageout, format_param
     else if(type == FORMAT_EXR) {
         result = image_save_exr(imageout);
     }
+    else if(type == FORMAT_EPS) {
+        result = image_save_eps(imageout);
+    }
     else {
         // save in the original format
         int final_drawable = gimp_image_merge_visible_layers(imageout->image_id, GIMP_CLIP_TO_IMAGE);
@@ -1421,6 +1425,48 @@ static gboolean image_save_exr(image_output out)
         GIMP_PDB_DRAWABLE, final_drawable,
         GIMP_PDB_STRING, out->filepath,
         GIMP_PDB_STRING, out->filename,
+        GIMP_PDB_END
+    );
+    
+    return TRUE;
+}
+
+static gboolean image_save_eps(image_output out)
+{
+    bimp_show_error_dialog(g_strdup_printf(_("Type=%s"), out->filename), bimp_window_main);
+
+    gint nreturn_vals;
+    int final_drawable = gimp_image_merge_visible_layers(out->image_id, GIMP_CLIP_TO_IMAGE);
+    
+    gdouble width = 0;
+    gdouble height = 0;
+    gdouble x_offset = 0;
+    gdouble y_offset = 0;
+    int unit = 0;
+    int keep_ratio = 1;
+    int rotation = 0;
+    int eps_flag = 0;
+    int preview = 0;
+    int level = 1;
+    
+    GimpParam *return_vals = gimp_run_procedure(
+        "file_eps_save",
+        &nreturn_vals,
+        GIMP_PDB_INT32, GIMP_RUN_NONINTERACTIVE,
+        GIMP_PDB_IMAGE, out->image_id,
+        GIMP_PDB_DRAWABLE, final_drawable,
+        GIMP_PDB_STRING, out->filepath,
+        GIMP_PDB_STRING, out->filename,
+        GIMP_PDB_FLOAT, width,
+        GIMP_PDB_FLOAT, height,
+        GIMP_PDB_FLOAT, x_offset,
+        GIMP_PDB_FLOAT, y_offset,
+        GIMP_PDB_INT32, unit,
+        GIMP_PDB_INT32, keep_ratio,
+        GIMP_PDB_INT32, rotation,
+        GIMP_PDB_INT32, eps_flag,
+        GIMP_PDB_INT32, preview,
+        GIMP_PDB_INT32, level,
         GIMP_PDB_END
     );
     

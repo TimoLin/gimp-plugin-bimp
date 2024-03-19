@@ -334,6 +334,7 @@ static void add_input_folder_r(char* folder, gboolean with_subdirs)
                 g_ascii_strcasecmp(file_extension, ".xpm") == 0 ||
                 g_ascii_strcasecmp(file_extension, ".exr") == 0 ||
                 g_ascii_strcasecmp(file_extension, ".dds") == 0 ||
+                g_ascii_strcasecmp(file_extension, ".eps") == 0 ||
                 g_ascii_strcasecmp(file_extension, ".xcf") == 0) && 
                 g_slist_find_custom(bimp_input_filenames, filename, (GCompareFunc)strcmp) == NULL)
             {
@@ -594,7 +595,7 @@ static void open_file_chooser(GtkWidget *widget, gpointer data)
 {
     GSList *selection;
     
-    GtkFileFilter *filter_all, *supported[16];
+    GtkFileFilter *filter_all, *supported[17];
 
     GtkWidget* file_chooser = gtk_file_chooser_dialog_new(
         _("Select images"), 
@@ -695,10 +696,15 @@ static void open_file_chooser(GtkWidget *widget, gpointer data)
     gtk_file_filter_set_name(supported[15], "GIMP XCF (*.xcf)");
     gtk_file_filter_add_pattern (supported[15], "*.[xX][cC][fF]");
     gtk_file_filter_add_pattern (filter_all, "*.[xX][cC][fF]");
+
+    supported[16] = gtk_file_filter_new();
+    gtk_file_filter_set_name(supported[16], "Encapsulated PostScript (*.eps)");
+    gtk_file_filter_add_pattern (supported[16], "*.[eE][pP][sS]");
+    gtk_file_filter_add_pattern (filter_all, "*.[eE][pP][sS]");
         
     gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(file_chooser), filter_all);
     size_t i;
-    for(i = 0; i < 16; i++) {
+    for(i = 0; i < 17; i++) {
         gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(file_chooser), supported[i]);
     }
     

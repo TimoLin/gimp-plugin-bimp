@@ -83,6 +83,7 @@ typedef enum format_type {
     FORMAT_WEBP,
     FORMAT_AVIF,
     FORMAT_EXR,
+    FORMAT_EPS,
     FORMAT_END
 } format_type;
 static const char* format_type_string[][2] = {
@@ -96,7 +97,8 @@ static const char* format_type_string[][2] = {
     {"heif", "Heif (.heif)"},                           /* FORMAT_HEIF */
     {"webp", "WebP (.webp)"},                           /* FORMAT_WEBP */
     {"avif", "AV1 Image Format (.avif)"},               /* FORMAT_AVIF */
-    {"exr", "OpenEXR (.exr)"}                           /* FORMAT_EXR */
+    {"exr", "OpenEXR (.exr)"},                          /* FORMAT_EXR */
+    {"eps", "Encapsulated Postscript (.eps)"}           /* FORMAT_EPS */
 };
 
 // First two bits = column, second two bits = row
@@ -257,6 +259,19 @@ typedef struct changeformat_params_avif {
     gboolean lossless;
     int quality;
 } *format_params_avif;
+
+typedef struct changeformat_params_eps {
+    int width;
+    int height;
+    int x_offset;
+    int y_offset;
+    int unit;
+    int keep_ratio;
+    int rotation;
+    int eps_flag;
+    int preview;
+    int level;
+} *format_params_eps;
 
 typedef struct manip_rename_set {
     gchar* pattern;
